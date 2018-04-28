@@ -121,6 +121,12 @@ public class value_iteration {
 			}
 		}
 	}
+	/**
+	 * Utility method to print data to file.
+	 * @param fileName
+	 * @param lines
+	 * @throws IOException
+	 */
 	public static void printFile(String fileName, List<String> lines) throws IOException	{
 		FileWriter fileWriter = new FileWriter(fileName);
 		BufferedWriter bw = new BufferedWriter(fileWriter);

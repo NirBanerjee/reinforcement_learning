@@ -1,4 +1,6 @@
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +20,11 @@ public class environment {
 	 * State parameter object to hold the agent state.
 	 */
 	private StateParameters agentState;
+	
+	/**
+	 * 
+	 */
+	private int startIndex;
 	
 	/**
 	 * Constructor method to read the file and generate maze data structure.
@@ -51,6 +58,7 @@ public class environment {
 				}	else if (ch == 'G')	{
 					this.mazeDS[i][j].setTerminal(true);
 				}	else if (ch == 'S')	{
+					this.startIndex = i;
 					this.mazeDS[i][j].setStartFlag(true);
 				}
 			}
@@ -64,11 +72,42 @@ public class environment {
 	 */
 	public void reset()	{
 		int[] actionList = { 0, 1, 2, 3};
-		this.agentState = new StateParameters(0, 0, actionList, 'S');
+		this.agentState = new StateParameters(startIndex, 0, actionList, 'S');
 		this.agentState.setStartFlag(true);
 	}
-	public double reward(int action)	{
-		return 0.0;
+	/**
+	 * Method to update agent state based on the 
+	 * @param action
+	 * @return
+	 */
+	public double step(int action)	{
+		if (this.agentState.isTerminal())	{
+			return 0.0;
+		}
+		
+		int xCord = this.agentState.getxCoord();
+		int yCord = this.agentState.getyCoord();
+		
+		if (action == 0)	{
+			yCord = yCord - 1;
+		}	else if (action == 1)	{
+			xCord = xCord - 1;
+		}	else if (action == 2)	{
+			yCord = yCord + 1;
+		}	else if (action == 3)	{
+			xCord = xCord + 1;
+		}
+		
+		StateParameters newState = null;
+		if (xCord < 0 || yCord < 0 || xCord >= mazeDS.length || yCord >= mazeDS[0].length)	{
+			newState = this.agentState;
+		}	else	 if (mazeDS[xCord][yCord].isObstacle())	{
+			newState = this.agentState;
+		}	else	{
+			newState = mazeDS[xCord][yCord];
+		}
+		this.agentState = newState;
+		return -1.0;
 	}
 	/**
 	 * Utility method to read action sequence file.
@@ -82,6 +121,22 @@ public class environment {
 		String[] actions = line.split(" ");
 		scanner.close();
 		return actions;
+	}
+	/**
+	 * Utility method to write to feedback file.
+	 * @param fileName
+	 * @param lines
+	 * @throws IOException
+	 */
+	public static void printFile(String fileName, List<String> lines) throws IOException	{
+		FileWriter fileWriter = new FileWriter(fileName);
+		BufferedWriter bw = new BufferedWriter(fileWriter);
+		for (String line : lines)	{
+			bw.write(line);
+			bw.write("\n");
+		}
+		bw.close();
+		fileWriter.close();
 	}
 	/**
 	 * Main method to test the environment class
@@ -99,9 +154,14 @@ public class environment {
 			actionsInt[i] = Integer.parseInt(actions[i]);
 		}
 		
+		List<String> lines = new ArrayList<>();
 		for (int i = 0; i < actionsInt.length; i++)	{
-			
+			double reward = env.step(actionsInt[i]);
+			int isTerm = env.agentState.isTerminal() ? 1 : 0;
+			String str = env.agentState.getxCoord() + " " + env.agentState.getyCoord() + " " + reward + " " + isTerm;
+			lines.add(str);
 		}
+		printFile(outputFile, lines);
 
 	}
 
