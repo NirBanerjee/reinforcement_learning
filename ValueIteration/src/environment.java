@@ -22,7 +22,7 @@ public class environment {
 	private StateParameters agentState;
 	
 	/**
-	 * 
+	 * Private variable to hold the index of start state.
 	 */
 	private int startIndex;
 	
@@ -162,7 +162,5 @@ public class environment {
 			lines.add(str);
 		}
 		printFile(outputFile, lines);
-
 	}
-
 }
