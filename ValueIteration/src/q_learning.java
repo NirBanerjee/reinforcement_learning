@@ -9,8 +9,37 @@ import java.io.IOException;
  *
  */
 public class q_learning {
-
-	
+	/**
+	 * Method to get action.
+	 * @param currentState
+	 * @param epsilon
+	 * @return
+	 */
+	public static int getAction(StateParameters currentState, double epsilon)	{
+		double[] qVals = currentState.getqValues();
+		
+		if (epsilon == 0)	{
+			
+		}
+	}
+	/**
+	 * Method to perform QLearning for each iteration.
+	 * @param env
+	 * @param episodeLength
+	 * @param alpha
+	 * @param gamma
+	 * @param epsilon
+	 */
+	public static void performQLearning(environment env, int episodeLength, double alpha, double gamma, double epsilon)	{
+		env.reset();
+		for (int k = 0; k < episodeLength; k++)	{
+			if (env.getAgentState().isTerminal())	{
+				break;
+			}
+			StateParameters currentState = env.getAgentState();
+			int act = getAction(currentState, epsilon);
+		}
+	}
 	/**
 	 * Main method to perform q-learning.
 	 * @param args
