@@ -22,14 +22,11 @@ public class value_iteration {
 	 * @return value corresponding to each state and action.
 	 */
 	public static double getQVals(StateParameters[][] mazeDS, StateParameters s, int i, int j, int act, double gamma)	{
-		
 		if (s.isTerminal())	{
 			return 0.0;
 		}
-		
 		int xCord = i;
 		int yCord = j;
-
 		if (act == 0)	{
 			yCord = yCord - 1;
 		}	else if (act == 1)	{
@@ -39,7 +36,6 @@ public class value_iteration {
 		}	else if (act == 3)	{
 			xCord = xCord + 1;
 		}
-		
 		StateParameters newState = null;
 		if (xCord < 0 || yCord < 0 || xCord >= mazeDS.length || yCord >= mazeDS[0].length)	{
 			newState = s;
@@ -51,7 +47,6 @@ public class value_iteration {
 		
 		double immediateReward = -1.0;
 		double qVal = immediateReward + (gamma * newState.getValue());
-		
 		return qVal;
 	}
 	/**
@@ -98,7 +93,6 @@ public class value_iteration {
 				}
 			}
 		}
-		
 	}
 	public static void printFile(String fileName, List<String> lines) throws IOException	{
 		FileWriter fileWriter = new FileWriter(fileName);
