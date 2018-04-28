@@ -110,6 +110,27 @@ public class environment {
 		return -1.0;
 	}
 	/**
+	 * Get the current state of the maze.
+	 * @return
+	 */
+	public StateParameters[][] getMazeDS() {
+		return mazeDS;
+	}
+	/**
+	 * Get the current state of the agent.
+	 * @return
+	 */
+	public StateParameters getAgentState() {
+		return agentState;
+	}
+	/**
+	 * Get the index of the start cell.
+	 * @return
+	 */
+	public int getStartIndex() {
+		return startIndex;
+	}
+	/**
 	 * Utility method to read action sequence file.
 	 * @param sequenceFile
 	 * @return List with squence of actions.
@@ -163,4 +184,5 @@ public class environment {
 		}
 		printFile(outputFile, lines);
 	}
+	
 }
