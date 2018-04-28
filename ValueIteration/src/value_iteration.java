@@ -12,14 +12,14 @@ import java.util.Scanner;
 
 public class value_iteration {
 	/**
-	 * 
+	 * method to calculate the Values for each state and corresponding action.
 	 * @param mazeDS
 	 * @param s
 	 * @param i
 	 * @param j
 	 * @param act
 	 * @param gamma
-	 * @return
+	 * @return value corresponding to each state and action.
 	 */
 	public static double getQVals(StateParameters[][] mazeDS, StateParameters s, int i, int j, int act, double gamma)	{
 		
@@ -113,7 +113,7 @@ public class value_iteration {
 	/**
 	 * Method to read input file
 	 * @param fileName
-	 * @return
+	 * @return maze as a DS
 	 */
 	public static StateParameters[][] readMaze(String fileName, int[] actionsList) throws IOException	{
 		File file = new File(fileName);
@@ -170,7 +170,7 @@ public class value_iteration {
 				if (mazeDS[i][j].isObstacle())	{
 					continue;
 				}
-				String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + "  " + mazeDS[i][j].getValue();
+				String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + " " + mazeDS[i][j].getValue();
 				lines.add(str);
 			}
 		}
@@ -182,7 +182,7 @@ public class value_iteration {
 				if (mazeDS[i][j].isObstacle())	{
 					continue;
 				}
-				String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + "  " + mazeDS[i][j].getPolicy();
+				String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + " " + mazeDS[i][j].getPolicy();
 				lines.add(str);
 			}
 		}
@@ -197,7 +197,7 @@ public class value_iteration {
 				}
 				double[] temp = mazeDS[i][j].getqValues();
 				for (int k = 0; k < temp.length; k++)	{
-					String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + "  " + k + " " + temp[k];
+					String str = mazeDS[i][j].getxCoord() + " " + mazeDS[i][j].getyCoord() + " " + k + " " + temp[k];
 					lines.add(str);
 				}
 			}
