@@ -61,8 +61,8 @@ public class StateParameters {
 		super();
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
-		this.value = 0;
-		this.policy = 0;
+		this.value = 0.0;
+		this.policy = 0.0;
 		this.qValues = new double[actionList.length];
 		this.cellVal = cell;
 	}
