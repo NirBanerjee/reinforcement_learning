@@ -36,6 +36,7 @@ public class value_iteration {
 		}	else if (act == 3)	{
 			xCord = xCord + 1;
 		}
+		
 		StateParameters newState = null;
 		if (xCord < 0 || yCord < 0 || xCord >= mazeDS.length || yCord >= mazeDS[0].length)	{
 			newState = s;
@@ -75,22 +76,48 @@ public class value_iteration {
 					}
 					mazeDS[i][j].setqValues(qVals);
 					double max = Double.NEGATIVE_INFINITY;
-					double maxIdx = 0;
 					for (int idx = 0; idx < qVals.length; idx++)	{
 						if (qVals[idx] > max)	{
 							max = qVals[idx];
-							maxIdx = idx;
 						}
 					}
 					values[i][j] = max;
-					policy[i][j] = maxIdx;
 				}
 			}
 			for (int i = 0; i < mazeDS.length; i++)	{
 				for (int j = 0; j < mazeDS[0].length; j++)	{
 					mazeDS[i][j].setValue(values[i][j]);
-					mazeDS[i][j].setPolicy(policy[i][j]);
 				}
+			}
+		}
+		
+		//Auxillary Policy Update.
+		for (int i = 0; i < mazeDS.length; i++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
+				StateParameters s = mazeDS[i][j];
+				if (s.isObstacle())	{
+					continue;
+				}
+				double[] qVals = new double[actionsList.length];
+				for (int a = 0; a < actionsList.length; a++)	{
+					int act = actionsList[a];
+					qVals[a] = getQVals(mazeDS, s, i, j, act, gamma);
+				}
+				mazeDS[i][j].setqValues(qVals);
+				double max = Double.NEGATIVE_INFINITY;
+				double maxIdx = 0;
+				for (int idx = 0; idx < qVals.length; idx++)	{
+					if (qVals[idx] > max)	{
+						max = qVals[idx];
+						maxIdx = idx;
+					}
+				}
+				policy[i][j] = maxIdx;
+			}
+		}
+		for (int i = 0; i < mazeDS.length; i++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
+				mazeDS[i][j].setPolicy(policy[i][j]);
 			}
 		}
 	}
@@ -127,16 +154,19 @@ public class value_iteration {
 			for (int j = 0; j < line.length(); j++)	{
 				char ch = line.charAt(j);
 				maze[i][j] = new StateParameters(i, j, actionsList, ch);
-				if (ch == '*')	{
-					maze[i][j].setObstacle(true);
-				}
 				maze[i][j].setStartFlag(false);
 				maze[i][j].setTerminal(false);
+				maze[i][j].setObstacle(false);
+				if (ch == '*')	{
+					maze[i][j].setObstacle(true);
+				}	else if (ch == 'G')	{
+					maze[i][j].setTerminal(true);
+				}	else if (ch == 'S')	{
+					maze[i][j].setStartFlag(true);
+				}
 			}
 			i++;
 		}
-		maze[lineCount - 1][0].setStartFlag(true);
-		maze[0][lineCount - 1].setTerminal(true);
 		scanner.close();
 		return maze;
 	}
@@ -160,7 +190,7 @@ public class value_iteration {
 		//Print to Value File.
 		List<String> lines = new ArrayList<>();
 		for (int i = 0; i < mazeDS.length; i++)	{
-			for (int j = 0; j < mazeDS.length; j++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
 				if (mazeDS[i][j].isObstacle())	{
 					continue;
 				}
@@ -172,7 +202,7 @@ public class value_iteration {
 		//Print to Policy File
 		lines = new ArrayList<>();
 		for (int i = 0; i < mazeDS.length; i++)	{
-			for (int j = 0; j < mazeDS.length; j++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
 				if (mazeDS[i][j].isObstacle())	{
 					continue;
 				}
@@ -185,7 +215,7 @@ public class value_iteration {
 		//Print to q Values file.
 		lines = new ArrayList<>();
 		for (int i = 0; i < mazeDS.length; i++)	{
-			for (int j = 0; j < mazeDS.length; j++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
 				if (mazeDS[i][j].isObstacle())	{
 					continue;
 				}
