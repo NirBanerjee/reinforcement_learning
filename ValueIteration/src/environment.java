@@ -71,9 +71,7 @@ public class environment {
 	 * Method to reset the agentState to initial stage.
 	 */
 	public void reset()	{
-		int[] actionList = { 0, 1, 2, 3};
-		this.agentState = new StateParameters(startIndex, 0, actionList, 'S');
-		this.agentState.setStartFlag(true);
+		this.agentState = this.mazeDS[startIndex][0];
 	}
 	/**
 	 * Method to update agent state based on the 

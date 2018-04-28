@@ -66,7 +66,22 @@ public class StateParameters {
 		this.qValues = new double[actionList.length];
 		this.cellVal = cell;
 	}
-
+	/**
+	 * Parameterized constructor.
+	 * @param obj
+	 */
+	public StateParameters(StateParameters obj) {
+		super();
+		this.xCoord = obj.getxCoord();
+		this.yCoord = obj.getyCoord();
+		this.qValues = obj.getqValues();
+		this.value = obj.getValue();
+		this.policy = obj.getPolicy();
+		this.cellVal = obj.getCellVal();
+		this.isTerminal = obj.isTerminal();
+		this.isObstacle = obj.isObstacle();
+		this.isStartFlag = obj.isStartFlag();
+	}
 	/**
 	 * Getter for xCoord.
 	 * @return xCoord

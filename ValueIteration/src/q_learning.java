@@ -10,16 +10,20 @@ import java.util.Random;
  */
 public class q_learning {
 	/**
-	 * Method to transition to next step and get the qvalue for the move.
-	 * @param currentState
-	 * @param act
-	 * @param gamma
+	 * Method to return best Action
+	 * @param qVals
 	 * @return
 	 */
-	private static double getQVal(environment env, StateParameters currentState, int act, double gamma)	{
-		double imReward = env.step(act);
-		StateParameters newState = env.getAgentState();
-		return (imReward + (gamma * newState.getValue()));
+	private static int getBestAction(double[] qVals)	{
+		double max = Double.NEGATIVE_INFINITY;
+		int act = 0;
+		for (int i = 0; i < qVals.length; i++)	{
+			if (qVals[i] > max)	{
+				max = qVals[i];
+				act = i;
+			}
+		}
+		return act;
 	}
 	/**
 	 * Method to get action.
@@ -30,20 +34,34 @@ public class q_learning {
 	public static int getAction(StateParameters currentState, double epsilon)	{
 		double[] qVals = currentState.getqValues();
 		int act = 0;
-		Random r = new Random();
-		double probSelected = r.nextInt(1001)/1000.0;
-		if (probSelected > epsilon)	{
-			double max = Double.NEGATIVE_INFINITY;
-			for (int i = 0; i < qVals.length; i++)	{
-				if (max < qVals[i])	{
-					max = qVals[i];
-					act = i;
-				}
-			}
-			return act;
+		double probSelected = Math.random();
+		if (epsilon == 0.0 || probSelected >= epsilon)	{
+			return getBestAction(qVals);
 		}
+		Random r = new Random();
 		act = r.nextInt(4);
 		return act;
+	}
+	/**
+	 * 
+	 */
+	private static void updateValueAndPolicy(environment env)	{
+		StateParameters[][] mazeDS = env.getMazeDS();
+		for (int i = 0; i < mazeDS.length; i++)	{
+			for (int j = 0; j < mazeDS[0].length; j++)	{
+				double max = Double.NEGATIVE_INFINITY;
+				int act = 0;
+				double[] qVals = mazeDS[i][j].getqValues();
+				for (int k = 0; k < qVals.length; k++)	{
+					if (qVals[k] > max)	{
+						max = qVals[k];
+						act = k;
+					}
+				}
+				mazeDS[i][j].setPolicy(act);
+				mazeDS[i][j].setValue(max);
+			}
+		}
 	}
 	/**
 	 * Method to perform QLearning for each iteration.
@@ -54,28 +72,24 @@ public class q_learning {
 	 * @param epsilon
 	 */
 	public static void performQLearning(environment env, int episodeLength, double alpha, double gamma, double epsilon)	{
-		env.reset();
 		for (int k = 0; k < episodeLength; k++)	{
-			if (env.getAgentState().isTerminal())	{
-				break;
-			}
 			StateParameters currentState = env.getAgentState();
 			double[] oldQVals = currentState.getqValues();
 			int act = getAction(currentState, epsilon);
-			double newVal = getQVal(env, currentState, act, gamma);
-			oldQVals[act] = ((1 - alpha) *  oldQVals[act]) + (alpha * newVal);
-			//Update V* value
-			double max = Double.NEGATIVE_INFINITY;
-			double idx = 0;
-			for (int i = 0; i < oldQVals.length; i++)	{
-				if (oldQVals[i] > max)	{
-					max = oldQVals[i];
-					idx = i;
-				}
-			}
-			currentState.setValue(max);
-			currentState.setPolicy(idx);
+		    double reward = env.step(act);
+		    StateParameters newState = env.getAgentState();
+		    double[] newQVals = newState.getqValues();
+		    double max = Double.NEGATIVE_INFINITY;
+		    for (int t = 0; t < newQVals.length; t++)	{
+		    		if (newQVals[t] > max)	{
+		    			max = newQVals[t];
+		    		}
+		    }
+			oldQVals[act] = ((1 - alpha) *  oldQVals[act]) + (alpha * (reward + (gamma * max)));
 			currentState.setqValues(oldQVals);
+			if (env.getAgentState().isTerminal())	{
+				break;
+			}
 		}
 	}
 	/**
@@ -114,8 +128,11 @@ public class q_learning {
 		environment env = new environment(mazeFile);
 		
 		for (int n = 0; n < numEpochs; n++)	{
+			env.reset();
 			performQLearning(env, episodeLength, alpha, gamma, epsilon);
+			updateValueAndPolicy(env);
 		}
+		updateValueAndPolicy(env);
 		
 		//Final Maze DS
 		StateParameters[][] mazeDS = env.getMazeDS();
