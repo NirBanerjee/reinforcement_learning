@@ -47,6 +47,7 @@ public class value_iteration {
 		}
 		
 		double immediateReward = -1.0;
+
 		double qVal = immediateReward + (gamma * newState.getValue());
 		return qVal;
 	}
@@ -60,7 +61,7 @@ public class value_iteration {
 	public static void valueIterationsAlgorithm(StateParameters[][] mazeDS, int[] actionsList, int numEpoch, double gamma)	{
 		double[][] values = new double[mazeDS.length][mazeDS[0].length];
 		double[][] policy = new double[mazeDS.length][mazeDS[0].length];
-		
+		long timeInit = System.currentTimeMillis();
 		for (int n = 0; n < numEpoch; n++)	{
 			System.out.println("Running Epoch = " + (n+1));
 			for (int i = 0; i < mazeDS.length; i++)	{
@@ -120,6 +121,8 @@ public class value_iteration {
 				mazeDS[i][j].setPolicy(policy[i][j]);
 			}
 		}
+		long timeExit = System.currentTimeMillis();
+		System.out.println("Time Taken = " + (timeExit - timeInit));
 	}
 	/**
 	 * Utility method to print data to file.
@@ -189,6 +192,7 @@ public class value_iteration {
 		int numEpoch = Integer.parseInt(args[4]);
 		double gamma = Double.parseDouble(args[5]);
 		
+		
 		int[] actionsList = {0, 1, 2, 3};
 		StateParameters[][] mazeDS = readMaze(mazeFile, actionsList);
 		valueIterationsAlgorithm(mazeDS, actionsList, numEpoch, gamma);
@@ -233,5 +237,6 @@ public class value_iteration {
 			}
 		}
 		printFile(qFile, lines);
+		
 	}
 }

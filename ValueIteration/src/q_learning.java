@@ -71,7 +71,8 @@ public class q_learning {
 	 * @param gamma
 	 * @param epsilon
 	 */
-	public static void performQLearning(environment env, int episodeLength, double alpha, double gamma, double epsilon)	{
+	public static int performQLearning(environment env, int episodeLength, double alpha, double gamma, double epsilon)	{
+		int steps = 0;
 		for (int k = 0; k < episodeLength; k++)	{
 			StateParameters currentState = env.getAgentState();
 			double[] oldQVals = currentState.getqValues();
@@ -87,10 +88,12 @@ public class q_learning {
 		    }
 			oldQVals[act] = ((1 - alpha) *  oldQVals[act]) + (alpha * (reward + (gamma * max)));
 			currentState.setqValues(oldQVals);
+			steps++;
 			if (env.getAgentState().isTerminal())	{
 				break;
 			}
 		}
+		return steps;
 	}
 	/**
 	 * Utility method to print data to file.
@@ -127,11 +130,16 @@ public class q_learning {
 		//Initialize the env
 		environment env = new environment(mazeFile);
 		
+		long timeInit = System.currentTimeMillis();
+		int steps = 0;
 		for (int n = 0; n < numEpochs; n++)	{
 			env.reset();
-			performQLearning(env, episodeLength, alpha, gamma, epsilon);
+			steps = steps + performQLearning(env, episodeLength, alpha, gamma, epsilon);
 			updateValueAndPolicy(env);
 		}
+		long timeExit = System.currentTimeMillis();
+		System.out.println("Time Taken = " + (timeExit - timeInit));
+		System.out.println("Steps = " + (steps) / 2000.0);
 		updateValueAndPolicy(env);
 		
 		//Final Maze DS
